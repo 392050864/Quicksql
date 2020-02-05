@@ -33,13 +33,13 @@ function start() {
              IFS=.   read major minor extra <<< "$version";
              if (( major >= 2));
              then
-                 if (( minor < 2));
+                 if (( minor < 3));
                  then
-                     echo "ERROR: Required spark version >= 2.2"
+                     echo "ERROR: Required spark version >= 2.3"
                      exit 1
                  fi
              else
-                 echo "ERROR: Required spark version >= 2.2"
+                 echo "ERROR: Required spark version >= 2.3"
                  exit 1
              fi
         fi

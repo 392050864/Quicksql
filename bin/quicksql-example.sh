@@ -6,6 +6,21 @@ if [ "$#"A = "0A" ] ; then
   HELP_ENABLE="true"
 fi
 
+#check mac getopt command
+sysOS=`uname -s`
+if [ $sysOS == "Darwin" ];then
+	 getopt --test
+   if [ "$?" != "4" ];then
+       brew -v &gt; /dev/null
+       if [ "$?" != "0" ];then
+           echo 'Please install brew for Mac: ruby -e "$(curl -fsSL https://raw.githubusercontent
+         .com/Homebrew/install/master/install)"'
+       fi
+       echo 'Please install gnu-getopt for Mac: brew install gnu-getopt'
+       exit 1
+   fi
+fi
+
 #parse args
 ARGS=`getopt -o "e:h"  -l "help:,runner:,class:" -n "quicksql-example.sh" -- "$@"`
 
@@ -132,13 +147,13 @@ elif [ "${QSQL_RUNNER}"X = "SPARKX" ] ; then
        IFS=.   read major minor extra <<< "$version";
        if (( major >= 2));
        then
-           if (( minor < 2));
+           if (( minor < 3));
            then
-               echo "ERROR: Required spark version >= 2.2"
+               echo "ERROR: Required spark version >= 2.3"
                exit 1
            fi
        else
-           echo "ERROR: Required spark version >= 2.2"
+           echo "ERROR: Required spark version >= 2.3"
            exit 1
        fi
    fi

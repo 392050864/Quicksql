@@ -6,6 +6,21 @@ export QSQL_HOME="$(cd "`dirname "$0"`"/..; pwd)"
 #import quicksql.sh related environment variables
 . "${QSQL_HOME}/bin/commons.sh"
 
+#check mac getopt command
+sysOS=`uname -s`
+if [ $sysOS == "Darwin" ];then
+	 getopt --test
+   if [ "$?" != "4" ];then
+       brew -v &gt; /dev/null
+       if [ "$?" != "0" ];then
+           echo 'Please install brew for Mac: ruby -e "$(curl -fsSL https://raw.githubusercontent
+         .com/Homebrew/install/master/install)"'
+       fi
+       echo 'Please install gnu-getopt for Mac: brew install gnu-getopt'
+       exit 1
+   fi
+fi
+
 #parse args
 ARGS=`getopt -o "e:h" -l "runner:,master:,worker_memory:,driver_memory:,worker_num:,file:" -n "quicksql.sh" -- "$@"`
 
@@ -315,13 +330,13 @@ elif [ "${QSQL_RUNNER}"X = "SPARKX" ] ; then
        IFS=.   read major minor extra <<< "$version";
        if (( major >= 2));
        then
-           if (( minor < 2));
+           if (( minor < 3));
            then
-               echo "ERROR: Required spark version >= 2.2"
+               echo "ERROR: Required spark version >= 2.3"
                exit 1
            fi
        else
-           echo "ERROR: Required spark version >= 2.2"
+           echo "ERROR: Required spark version >= 2.3"
            exit 1
        fi
    fi
@@ -337,7 +352,12 @@ QSQL_LAUNCH_CLASSPATH="${QSQL_LAUNCH_CLASSPATH}:${QSQL_JARS}"
 
 
 if [ ! -z "${SQL}" ] ; then
-    SQL=$(echo "${SQL}" | base64 -w 0)
+    sysOS=`uname -s`
+    if [ $sysOS == "Darwin" ];then
+    	SQL= $(echo -n "${SQL}" | base64)
+    elif [ $sysOS == "Linux" ];then
+    	SQL=$(echo "${SQL}" | base64 -w 0)
+    fi
     CONF=${CONF}"--sql=${SQL}"
     eval "${JAVA_RUNNER}" -cp "${QSQL_LAUNCH_CLASSPATH}" com.qihoo.qsql.launcher.ExecutionDispatcher " $CONF"
     exit $?

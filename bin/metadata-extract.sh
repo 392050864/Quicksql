@@ -3,6 +3,21 @@
 export QSQL_HOME="$(cd "`dirname "$0"`"/..; pwd)"
 . "${QSQL_HOME}/bin/commons.sh"
 
+#check mac getopt command
+sysOS=`uname -s`
+if [ $sysOS == "Darwin" ];then
+	 getopt --test
+   if [ "$?" != "4" ];then
+       brew -v &gt; /dev/null
+       if [ "$?" != "0" ];then
+           echo 'Please install brew for Mac: ruby -e "$(curl -fsSL https://raw.githubusercontent
+         .com/Homebrew/install/master/install)"'
+       fi
+       echo 'Please install gnu-getopt for Mac: brew install gnu-getopt'
+       exit 1
+   fi
+fi
+
 ARGS=`getopt -o "p:d:r:h" -n "metadata-extract.sh" -- "$@"`
 
 eval set -- "${ARGS}"
