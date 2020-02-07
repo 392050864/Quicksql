@@ -28,7 +28,7 @@ $ vim ./conf/quicksql-env.sh #Set Your Basic Environment.
 进入bin目录，执行quicksql-example脚本。（这里使用了内嵌Elasticsearch Server与Csv数据源作一个关联过滤）
 
 ``````shell
-$ ./bin/quicksql-example com.qihoo.qsql.CsvJoinWithEsExample #换成选项型，并能打印SQL语句
+$ ./bin/quicksql-example --class com.qihoo.qsql.CsvJoinWithEsExample --runner spark #换成选项型，并能打印SQL语句
 ``````
 
 如果能够显示以下结果，说明环境构建完毕，可以尝试新的操作。
